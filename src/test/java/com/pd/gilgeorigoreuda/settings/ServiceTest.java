@@ -14,8 +14,10 @@ import com.pd.gilgeorigoreuda.search.repository.SearchRepository;
 import com.pd.gilgeorigoreuda.search.service.SearchService;
 import com.pd.gilgeorigoreuda.store.repository.StoreNativeQueryRepository;
 import com.pd.gilgeorigoreuda.store.repository.StorePreferenceRepository;
+import com.pd.gilgeorigoreuda.store.repository.StoreReportHistoryRepository;
 import com.pd.gilgeorigoreuda.store.repository.StoreRepository;
 import com.pd.gilgeorigoreuda.store.service.StorePreferenceService;
+import com.pd.gilgeorigoreuda.store.service.StoreReportService;
 import com.pd.gilgeorigoreuda.store.service.StoreService;
 import com.pd.gilgeorigoreuda.visit.repository.StoreVisitRecordRepository;
 import com.pd.gilgeorigoreuda.visit.service.VisitService;
@@ -47,6 +49,9 @@ public abstract class ServiceTest {
 
     @InjectMocks
     protected StorePreferenceService storePreferenceService;
+
+    @InjectMocks
+    protected StoreReportService storeReportService;
 
     // Mock 객체
     @Mock
@@ -93,5 +98,8 @@ public abstract class ServiceTest {
 
     @Mock
     protected StorePreferenceRepository storePreferenceRepository;
+
+    @Mock
+    protected StoreReportHistoryRepository storeReportHistoryRepository;
 
 }
