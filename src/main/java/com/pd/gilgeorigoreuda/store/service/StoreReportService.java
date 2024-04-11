@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StoreReportService {
 
-    private final StoreReportHistoryRepository storeReportRepository;
+    private final StoreReportHistoryRepository storeReportHistoryRepository;
     private final StoreRepository storeRepository;
     private final DistanceCalculator distanceCalculator;
 
@@ -34,7 +34,7 @@ public class StoreReportService {
 
         checkIsValidDistanceForReport(reportCreateRequest, targetStore);
 
-        storeReportRepository.save(reportCreateRequest.toEntity(storeId, memberId));
+        storeReportHistoryRepository.save(reportCreateRequest.toEntity(storeId, memberId));
     }
 
     @Transactional
@@ -43,12 +43,12 @@ public class StoreReportService {
 
         checkIsReporter(memberId, reportForDelete);
 
-        storeReportRepository.deleteById(reportForDelete.getId());
+        storeReportHistoryRepository.deleteById(reportForDelete.getId());
     }
 
     private static void checkIsReporter(Long memberId, StoreReportHistory reportForDelete) {
         if (!reportForDelete.isReporter(memberId)) {
-            throw new NoRepoterMemberException();
+            throw new NoReporterMemberException();
         }
     }
 
@@ -71,19 +71,19 @@ public class StoreReportService {
     }
 
     private void checkIsExistStoreReportHistory(final Long storeId, final Long memberId) {
-        storeReportRepository.findStoreReportHistoryByStoreIdAndMemberId(storeId, memberId)
+        storeReportHistoryRepository.findStoreReportHistoryByStoreIdAndMemberId(storeId, memberId)
                 .ifPresent(report -> {
                     throw new AlreadyReportedException();
                 });
     }
 
     private StoreReportHistory findStoreReportHistory(final Long reportId) {
-        return storeReportRepository.findStoreReportHistoryByReportId(reportId)
+        return storeReportHistoryRepository.findStoreReportHistoryByReportId(reportId)
                 .orElseThrow(NoSuchReportException::new);
     }
 
     public StoreReportHistoryListResponse checkMemberReportList(final Long memberId){
-        List<StoreReportHistoryResponse> results = storeReportRepository.findStoreReportHistoriesByMemberId(memberId)
+        List<StoreReportHistoryResponse> results = storeReportHistoryRepository.findStoreReportHistoriesByMemberId(memberId)
                 .stream()
                 .map(StoreReportHistoryResponse::of)
                 .toList();
@@ -91,7 +91,7 @@ public class StoreReportService {
         return StoreReportHistoryListResponse.of(results);
     }
     public StoreReportHistoryListResponse checkStoreReportList(final Long storeId){
-        List<StoreReportHistoryResponse> results = storeReportRepository.findStoreReportHistoriesByStoreId(storeId)
+        List<StoreReportHistoryResponse> results = storeReportHistoryRepository.findStoreReportHistoriesByStoreId(storeId)
                 .stream()
                 .map(StoreReportHistoryResponse::of)
                 .toList();
