@@ -27,4 +27,14 @@ public class MemberActiveInfoFixtures {
                 .build();
     }
 
+    public static MemberActiveInfo PARK_ACTIVE_INFO() {
+        return MemberActiveInfo.builder()
+                .id(3L)
+                .memberLevel(BEGINNER)
+                .totalWalkingDistance(1000)
+                .totalVisitCount(10)
+                .exp(100)
+                .build();
+    }
+
 }

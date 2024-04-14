@@ -31,8 +31,7 @@ public interface StoreReportHistoryRepository extends JpaRepository<StoreReportH
 	@Query("SELECT sr "
 			+ "FROM StoreReportHistory sr "
 			+ "WHERE sr.store.id = :storeId "
-			+ "AND sr.member.id = :memberId"
-	)
+			+ "AND sr.member.id = :memberId")
 	Optional<StoreReportHistory> findStoreReportHistoryByStoreIdAndMemberId(@Param("storeId") final Long storeId, @Param("memberId") final Long memberId);
 
 }

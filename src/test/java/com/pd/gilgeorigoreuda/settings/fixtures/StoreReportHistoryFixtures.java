@@ -16,4 +16,22 @@ public class StoreReportHistoryFixtures {
                 .build();
     }
 
+    public static StoreReportHistory ODENG_KIM_REPORT_HISTORY() {
+        return StoreReportHistory.builder()
+                .id(2L)
+                .content("report content")
+                .member(KIM())
+                .store(ODENG())
+                .build();
+    }
+
+    public static StoreReportHistory TTEOKBOKKI_LEE_REPORT_HISTORY() {
+        return StoreReportHistory.builder()
+                .id(3L)
+                .content("report content")
+                .member(LEE())
+                .store(TTEOKBOKKI())
+                .build();
+    }
+
 }

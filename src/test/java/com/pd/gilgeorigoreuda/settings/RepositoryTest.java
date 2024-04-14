@@ -9,6 +9,7 @@ import com.pd.gilgeorigoreuda.settings.builder.BuilderSupporter;
 import com.pd.gilgeorigoreuda.settings.builder.DataBuilder;
 import com.pd.gilgeorigoreuda.store.repository.StoreNativeQueryRepository;
 import com.pd.gilgeorigoreuda.store.repository.StorePreferenceRepository;
+import com.pd.gilgeorigoreuda.store.repository.StoreReportHistoryRepository;
 import com.pd.gilgeorigoreuda.store.repository.StoreRepository;
 import com.pd.gilgeorigoreuda.visit.repository.StoreVisitRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +52,8 @@ public abstract class RepositoryTest {
 
     @Autowired
     protected StorePreferenceRepository storePreferenceRepository;
+
+    @Autowired
+    protected StoreReportHistoryRepository storeReportHistoryRepository;
 
 }
