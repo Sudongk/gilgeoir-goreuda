@@ -26,4 +26,14 @@ public class MemberFixtures {
                 .build();
     }
 
+    public static Member PARK() {
+        return Member.builder()
+                .id(3L)
+                .nickname("ParkPark")
+                .profileImageUrl("http://image3.com")
+                .socialId("123456789")
+                .memberActiveInfo(PARK_ACTIVE_INFO())
+                .build();
+    }
+
 }
