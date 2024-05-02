@@ -34,4 +34,13 @@ public class StoreReportHistoryFixtures {
                 .build();
     }
 
+    public static StoreReportHistory BUNGEOPPANG_PARK_REPORT_HISTORY() {
+        return StoreReportHistory.builder()
+                .id(4L)
+                .content("report content")
+                .member(PARK())
+                .store(BUNGEOPPANG())
+                .build();
+    }
+
 }

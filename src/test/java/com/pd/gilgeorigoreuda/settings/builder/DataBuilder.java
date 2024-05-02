@@ -76,6 +76,10 @@ public class DataBuilder {
         return builderSupporter.storeReportHistoryRepository().save(storeReportHistory);
     }
 
+    public List<StoreReportHistory> buildStoreReportHistories(final List<StoreReportHistory> storeReportHistories) {
+        return builderSupporter.storeReportHistoryRepository().saveAll(storeReportHistories);
+    }
+
     public Store buildStore(final Store store) {
         return builderSupporter.storeRepository().save(store);
     }

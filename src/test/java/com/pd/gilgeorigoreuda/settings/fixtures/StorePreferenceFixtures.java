@@ -10,6 +10,7 @@ public class StorePreferenceFixtures {
 
     public static StorePreference BUNGEOPPANG_PREFERENCE_PREFERRED() {
         return StorePreference.builder()
+                .id(1L)
                 .store(BUNGEOPPANG())
                 .member(LEE())
                 .preferenceType(PREFERRED)
@@ -18,6 +19,7 @@ public class StorePreferenceFixtures {
 
     public static StorePreference BUNGEOPPANG_PREFERENCE_NONE() {
         return StorePreference.builder()
+                .id(2L)
                 .store(BUNGEOPPANG())
                 .member(LEE())
                 .preferenceType(NONE)
@@ -26,6 +28,7 @@ public class StorePreferenceFixtures {
 
     public static StorePreference BUNGEOPPANG_PREFERENCE_NOT_PREFERRED() {
         return StorePreference.builder()
+                .id(3L)
                 .store(BUNGEOPPANG())
                 .member(LEE())
                 .preferenceType(NOT_PREFERRED)
@@ -34,6 +37,7 @@ public class StorePreferenceFixtures {
 
     public static StorePreference ODENG_PREFERENCE_PREFERRED() {
         return StorePreference.builder()
+                .id(4L)
                 .store(ODENG())
                 .member(KIM())
                 .preferenceType(PREFERRED)
@@ -42,6 +46,7 @@ public class StorePreferenceFixtures {
 
     public static StorePreference ODENG_PREFERENCE_NONE() {
         return StorePreference.builder()
+                .id(5L)
                 .store(ODENG())
                 .member(KIM())
                 .preferenceType(NONE)
@@ -50,6 +55,7 @@ public class StorePreferenceFixtures {
 
     public static StorePreference ODENG_PREFERENCE_NOT_PREFERRED() {
         return StorePreference.builder()
+                .id(6L)
                 .store(ODENG())
                 .member(KIM())
                 .preferenceType(NOT_PREFERRED)

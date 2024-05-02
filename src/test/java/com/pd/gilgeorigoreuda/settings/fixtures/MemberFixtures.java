@@ -31,7 +31,7 @@ public class MemberFixtures {
                 .id(3L)
                 .nickname("ParkPark")
                 .profileImageUrl("http://image3.com")
-                .socialId("123456789")
+                .socialId("2312323")
                 .memberActiveInfo(PARK_ACTIVE_INFO())
                 .build();
     }
