@@ -24,6 +24,7 @@ class StoreReportHistoryRepositoryTest extends RepositoryTest {
         // given
         Member KIM = dataBuilder.buildMember(KIM());
         Member LEE = dataBuilder.buildMember(LEE());
+
         Store BUNGEOPPANG = dataBuilder.buildStore(BUNGEOPPANG());
         StoreReportHistory BUNGEOPPANG_LEE_REPORT_HISTORY = dataBuilder.buildStoreReportHistory(BUNGEOPPANG_LEE_REPORT_HISTORY());
 
@@ -47,60 +48,82 @@ class StoreReportHistoryRepositoryTest extends RepositoryTest {
         Member KIM = dataBuilder.buildMember(KIM());
         Member LEE = dataBuilder.buildMember(LEE());
 
-        Store BUNGEOPPANG = dataBuilder.buildStore(BUNGEOPPANG());
-        Store TTEOKBOKKI = dataBuilder.buildStore(TTEOKBOKKI());
+        dataBuilder.buildStores(List.of(BUNGEOPPANG(), ODENG(), TTEOKBOKKI()));
 
         StoreReportHistory BUNGEOPPANG_LEE_REPORT_HISTORY = dataBuilder.buildStoreReportHistory(BUNGEOPPANG_LEE_REPORT_HISTORY());
+        StoreReportHistory ODENG_KIM_REPORT_HISTORY = dataBuilder.buildStoreReportHistory(ODENG_KIM_REPORT_HISTORY());
         StoreReportHistory TTEOKBOKKI_LEE_REPORT_HISTORY = dataBuilder.buildStoreReportHistory(TTEOKBOKKI_LEE_REPORT_HISTORY());
 
         // when
         List<StoreReportHistory> storeReportHistories = storeReportHistoryRepository.findStoreReportHistoriesByMemberId(LEE.getId());
 
         // then
-        assertThat(storeReportHistories.size()).isEqualTo(2);
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(storeReportHistories.size()).isEqualTo(2);
+                    storeReportHistories.forEach(
+                            storeReportHistory -> softly.assertThat(storeReportHistory.getMember().getId()).isEqualTo(LEE.getId())
+                    );
+                }
+        );
     }
 
     @Test
     @DisplayName("가게 아이디로 해당 가게에 대한 신고들을 조회")
     void findStoreReportHistoriesByStoreId() {
         // given
-        Member KIM = dataBuilder.buildMember(KIM());
-        Member LEE = dataBuilder.buildMember(LEE());
+        dataBuilder.buildMembers(List.of(KIM(), LEE(), PARK()));
 
-        Store BUNGEOPPANG = dataBuilder.buildStore(BUNGEOPPANG());
-        Store TTEOKBOKKI = dataBuilder.buildStore(TTEOKBOKKI());
+        dataBuilder.buildStores(List.of(BUNGEOPPANG(), ODENG(), TTEOKBOKKI()));
 
-        StoreReportHistory BUNGEOPPANG_LEE_REPORT_HISTORY = dataBuilder.buildStoreReportHistory(BUNGEOPPANG_LEE_REPORT_HISTORY());
-        StoreReportHistory TTEOKBOKKI_LEE_REPORT_HISTORY = dataBuilder.buildStoreReportHistory(TTEOKBOKKI_LEE_REPORT_HISTORY());
+        dataBuilder.buildStoreReportHistories(
+                List.of(
+                        BUNGEOPPANG_LEE_REPORT_HISTORY(),
+                        ODENG_KIM_REPORT_HISTORY(),
+                        TTEOKBOKKI_LEE_REPORT_HISTORY(),
+                        BUNGEOPPANG_PARK_REPORT_HISTORY()
+                )
+        );
 
         // when
-        List<StoreReportHistory> storeReportHistories = storeReportHistoryRepository.findStoreReportHistoriesByStoreId(BUNGEOPPANG.getId());
+        List<StoreReportHistory> storeReportHistories = storeReportHistoryRepository.findStoreReportHistoriesByStoreId(BUNGEOPPANG().getId());
 
         // then
-        assertThat(storeReportHistories.size()).isEqualTo(1);
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(storeReportHistories.size()).isEqualTo(2);
+                    storeReportHistories.forEach(
+                            storeReportHistory -> softly.assertThat(storeReportHistory.getStore().getId()).isEqualTo(BUNGEOPPANG().getId())
+                    );
+                }
+        );
     }
 
     @Test
     @DisplayName("가게 아이디와 회원 아이디로 해당 가게에 대한 회원의 신고를 조회")
     void findStoreReportHistoryByStoreIdAndMemberId() {
         // given
-        Member KIM = dataBuilder.buildMember(KIM());
-        Member LEE = dataBuilder.buildMember(LEE());
+        dataBuilder.buildMembers(List.of(KIM(), LEE(), PARK()));
 
-        Store BUNGEOPPANG = dataBuilder.buildStore(BUNGEOPPANG());
-        Store TTEOKBOKKI = dataBuilder.buildStore(TTEOKBOKKI());
+        dataBuilder.buildStores(List.of(BUNGEOPPANG(), ODENG(), TTEOKBOKKI()));
 
-        StoreReportHistory BUNGEOPPANG_LEE_REPORT_HISTORY = dataBuilder.buildStoreReportHistory(BUNGEOPPANG_LEE_REPORT_HISTORY());
-        StoreReportHistory TTEOKBOKKI_LEE_REPORT_HISTORY = dataBuilder.buildStoreReportHistory(TTEOKBOKKI_LEE_REPORT_HISTORY());
+        dataBuilder.buildStoreReportHistories(
+                List.of(
+                        BUNGEOPPANG_LEE_REPORT_HISTORY(),
+                        ODENG_KIM_REPORT_HISTORY(),
+                        TTEOKBOKKI_LEE_REPORT_HISTORY(),
+                        BUNGEOPPANG_PARK_REPORT_HISTORY()
+                )
+        );
 
         // when
-        StoreReportHistory storeReportHistory = storeReportHistoryRepository.findStoreReportHistoryByStoreIdAndMemberId(BUNGEOPPANG.getId(), LEE.getId()).get();
+        StoreReportHistory storeReportHistory = storeReportHistoryRepository.findStoreReportHistoryByStoreIdAndMemberId(BUNGEOPPANG().getId(), LEE().getId()).get();
 
         // then
         assertSoftly(
                 softly -> {
-                    softly.assertThat(storeReportHistory.getStore().getId()).isEqualTo(BUNGEOPPANG.getId());
-                    softly.assertThat(storeReportHistory.getMember().getId()).isEqualTo(LEE.getId());
+                    softly.assertThat(storeReportHistory.getStore().getId()).isEqualTo(BUNGEOPPANG().getId());
+                    softly.assertThat(storeReportHistory.getMember().getId()).isEqualTo(LEE().getId());
                 }
         );
     }

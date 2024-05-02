@@ -10,7 +10,7 @@ public class MemberTokenFixtures {
         return MemberToken.builder()
                 .memberId(KIM().getId())
                 .accessToken("Kim AccessToken")
-                .refreshToken("Lee RefreshToken")
+                .refreshToken("Kim RefreshToken")
                 .build();
     }
 
