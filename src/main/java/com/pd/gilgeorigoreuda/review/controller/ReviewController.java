@@ -24,8 +24,8 @@ import java.net.URI;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/reviews")
 public class ReviewController {
-
     private final ReviewService reviewService;
+
     private final ReviewCommentService commentService;
 
     @MemberOnly
@@ -40,6 +40,18 @@ public class ReviewController {
         return ResponseEntity
                 .created(URI.create("/api/v1/reviews/stores/" + storeId + "/reviews/" + response.getId()))
                 .build();
+    }
+
+    @GetMapping("/stores/{storeId}")
+    public ResponseEntity<ReviewListResponse> getReviews(
+            @PathVariable final Long storeId,
+            final Pageable pageable
+    ) {
+        ReviewListResponse response = reviewService.findReviewsByStoreId(storeId, pageable);
+
+        return ResponseEntity
+                .ok()
+                .body(response);
     }
 
     @MemberOnly
@@ -71,7 +83,7 @@ public class ReviewController {
 
     @MemberOnly
     @PostMapping("{reviewId}/comments")
-    public ResponseEntity<Void> saveComment(
+    public ResponseEntity<Void> createReviewComment(
             @PathVariable("reviewId") final Long reviewId,
             @MemberInfo final LoginMember loginMember,
             @RequestBody @Valid final ReviewCommentCreateRequest commentRequest
@@ -84,7 +96,7 @@ public class ReviewController {
     }
 
     @GetMapping("{reviewId}/comments")
-    public ResponseEntity<ReviewCommentListResponse> findAllComment(
+    public ResponseEntity<ReviewCommentListResponse> getReviewComments(
             @PathVariable("reviewId") final Long reviewId,
             @RequestParam(name = "page", required = false, defaultValue = "0") final Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "10") final Integer size
@@ -122,18 +134,6 @@ public class ReviewController {
         return ResponseEntity
                 .ok()
                 .build();
-    }
-
-    @GetMapping("/stores/{storeId}")
-    public ResponseEntity<ReviewListResponse> getReviewsByStoreId(
-            @PathVariable final Long storeId,
-            final Pageable pageable
-    ) {
-        ReviewListResponse response = reviewService.findReviewsByStoreId(storeId, pageable);
-
-        return ResponseEntity
-                .ok()
-                .body(response);
     }
 
 }
