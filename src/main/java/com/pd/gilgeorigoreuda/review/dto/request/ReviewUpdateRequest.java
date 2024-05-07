@@ -22,7 +22,7 @@ public class ReviewUpdateRequest {
     private Integer reviewRating;
 
     @Size(max = 5, message = "이미지는 최대 5개까지 첨부할 수 있습니다.")
-    @URL(message = "유효한 URL을 입력해주세요.", regexp = "^(http|https)://(www\\.)?.*")
+//    @URL(message = "유효한 URL을 입력해주세요.", regexp = "^(http|https)://(www\\.)?.*")
     private List<String> imageUrls;
 
 }

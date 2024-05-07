@@ -24,8 +24,8 @@ import java.net.URI;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/reviews")
 public class ReviewController {
-    private final ReviewService reviewService;
 
+    private final ReviewService reviewService;
     private final ReviewCommentService commentService;
 
     @MemberOnly

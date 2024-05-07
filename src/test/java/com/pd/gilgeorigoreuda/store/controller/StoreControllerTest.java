@@ -112,8 +112,8 @@ class StoreControllerTest extends ControllerTest {
                 )
         );
 
-        when(storeService.saveStore(anyLong(), any(StoreCreateRequest.class)))
-                .thenReturn(StoreCreateResponse.of(1L));
+        given(storeService.saveStore(anyLong(), any(StoreCreateRequest.class)))
+                .willReturn(StoreCreateResponse.of(1L));
 
         // when
         ResultActions resultActions = performPostRequest(storeCreateRequest);
