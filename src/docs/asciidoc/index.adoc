@@ -212,3 +212,50 @@ include::{snippets}/store-report-controller-test/delete-store-report-success/req
 
 === Response
 include::{snippets}/store-report-controller-test/delete-store-report-success/http-response.adoc[]
+
+== 리뷰 API
+
+=== 리뷰 생성 (POST /api/v1/reviews/stores/{storeId})
+
+==== Request
+include::{snippets}/review-controller-test/create-review-success/http-request.adoc[]
+include::{snippets}/review-controller-test/create-review-success/path-parameters.adoc[]
+include::{snippets}/review-controller-test/create-review-success/request-fields.adoc[]
+include::{snippets}/review-controller-test/create-review-success/request-headers.adoc[]
+
+==== Response
+include::{snippets}/review-controller-test/create-review-success/http-response.adoc[]
+
+
+=== 리뷰 수정 (PUT /api/v1/reviews/stores/{storeId})
+
+==== Request
+include::{snippets}/review-controller-test/update-review-success/http-request.adoc[]
+include::{snippets}/review-controller-test/update-review-success/path-parameters.adoc[]
+include::{snippets}/review-controller-test/update-review-success/request-fields.adoc[]
+include::{snippets}/review-controller-test/update-review-success/request-headers.adoc[]
+
+==== Response
+include::{snippets}/review-controller-test/update-review-success/http-response.adoc[]
+
+
+=== 리뷰 삭제 (DELETE /api/v1/reviews/stores/{storeId})
+
+==== Request
+include::{snippets}/review-controller-test/delete-review-success/http-request.adoc[]
+include::{snippets}/review-controller-test/delete-review-success/path-parameters.adoc[]
+include::{snippets}/review-controller-test/delete-review-success/request-headers.adoc[]
+
+==== Response
+include::{snippets}/review-controller-test/delete-review-success/http-response.adoc[]
+
+
+=== 리뷰 조회 (GET /api/v1/reviews/stores/{storeId})
+
+==== Request
+include::{snippets}/review-controller-test/get-reviews-success/http-request.adoc[]
+include::{snippets}/review-controller-test/get-reviews-success/query-parameters.adoc[]
+
+==== Response
+include::{snippets}/review-controller-test/get-reviews-success/http-response.adoc[]
+include::{snippets}/review-controller-test/get-reviews-success/response-fields.adoc[]
