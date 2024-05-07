@@ -17,9 +17,10 @@ public class ReviewListResponse {
 	private List<ReviewResponse> reviews;
 	private PageInfo pageInfo;
 
-	private ReviewListResponse(
+	public ReviewListResponse(
 			final List<ReviewResponse> reviews,
-			final PageInfo pageInfo) {
+			final PageInfo pageInfo
+	) {
 		this.reviews = reviews;
 		this.pageInfo = pageInfo;
 	}

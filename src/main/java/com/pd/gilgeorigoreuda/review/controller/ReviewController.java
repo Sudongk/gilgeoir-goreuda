@@ -42,6 +42,18 @@ public class ReviewController {
                 .build();
     }
 
+    @GetMapping("/stores/{storeId}")
+    public ResponseEntity<ReviewListResponse> getReviews(
+            @PathVariable final Long storeId,
+            final Pageable pageable
+    ) {
+        ReviewListResponse response = reviewService.findReviewsByStoreId(storeId, pageable);
+
+        return ResponseEntity
+                .ok()
+                .body(response);
+    }
+
     @MemberOnly
     @PutMapping("/{reviewId}")
     public ResponseEntity<Void> updateReview(
@@ -71,7 +83,7 @@ public class ReviewController {
 
     @MemberOnly
     @PostMapping("{reviewId}/comments")
-    public ResponseEntity<Void> saveComment(
+    public ResponseEntity<Void> createReviewComment(
             @PathVariable("reviewId") final Long reviewId,
             @MemberInfo final LoginMember loginMember,
             @RequestBody @Valid final ReviewCommentCreateRequest commentRequest
@@ -84,7 +96,7 @@ public class ReviewController {
     }
 
     @GetMapping("{reviewId}/comments")
-    public ResponseEntity<ReviewCommentListResponse> findAllComment(
+    public ResponseEntity<ReviewCommentListResponse> getReviewComments(
             @PathVariable("reviewId") final Long reviewId,
             @RequestParam(name = "page", required = false, defaultValue = "0") final Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "10") final Integer size
@@ -122,18 +134,6 @@ public class ReviewController {
         return ResponseEntity
                 .ok()
                 .build();
-    }
-
-    @GetMapping("/stores/{storeId}")
-    public ResponseEntity<ReviewListResponse> getReviewsByStoreId(
-            @PathVariable final Long storeId,
-            final Pageable pageable
-    ) {
-        ReviewListResponse response = reviewService.findReviewsByStoreId(storeId, pageable);
-
-        return ResponseEntity
-                .ok()
-                .body(response);
     }
 
 }
