@@ -334,4 +334,226 @@ class ReviewControllerTest extends ControllerTest {
                 );
     }
 
+    @Nested
+    @DisplayName("리뷰 생성 실패 - 데이터 검증")
+    class CreateReviewFail {
+
+        @Test
+        @DisplayName("리뷰 내용이 없는 경우")
+        void createReviewFailNoContent() throws Exception {
+            // given
+            ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "",
+                    5,
+                    List.of("https://image1.com", "https://image2.com", "https://image3.com")
+            );
+
+            // when
+            ResultActions resultActions = performCreateReviewRequest(reviewCreateRequest, STORE_ID);
+
+            // then
+            resultActions
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("content : 내용을 입력해주세요. (request value: )"));
+
+            then(reviewService).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("리뷰 평점이 없는 경우")
+        void createReviewFailNoReviewRating() throws Exception {
+            // given
+            ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "content",
+                    null,
+                    List.of("https://image1.com", "https://image2.com", "https://image3.com")
+            );
+
+            // when
+            ResultActions resultActions = performCreateReviewRequest(reviewCreateRequest, STORE_ID);
+
+            // then
+            resultActions
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("reviewRating : 평점을 입력해주세요. (request value: null)"));
+
+            then(reviewService).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("리뷰 평점이 1 미만인 경우")
+        void createReviewFailInvalidReviewRating() throws Exception {
+            // given
+            ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "content",
+                    0,
+                    List.of("https://image1.com", "https://image2.com", "https://image3.com")
+            );
+
+            // when
+            ResultActions resultActions = performCreateReviewRequest(reviewCreateRequest, STORE_ID);
+
+            // then
+            resultActions
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("reviewRating : 평점은 1~5 사이여야 합니다. (request value: 0)"));
+
+            then(reviewService).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("리뷰 평점이 5 초과인 경우")
+        void createReviewFailOverReviewRating() throws Exception {
+            // given
+            ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "content",
+                    6,
+                    List.of("https://image1.com", "https://image2.com", "https://image3.com")
+            );
+
+            // when
+            ResultActions resultActions = performCreateReviewRequest(reviewCreateRequest, STORE_ID);
+
+            // then
+            resultActions
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("reviewRating : 평점은 1~5 사이여야 합니다. (request value: 6)"));
+
+            then(reviewService).shouldHaveNoInteractions();
+        }
+
+
+        @Test
+        @DisplayName("리뷰 이미지 URL이 5개 초과인 경우")
+        void createReviewFailOverImageUrls() throws Exception {
+            // given
+            ReviewCreateRequest reviewCreateRequest = new ReviewCreateRequest(
+                    "content",
+                    5,
+                    List.of("https://image1.com", "https://image2.com", "https://image3.com", "https://image4.com", "https://image5.com", "https://image6.com")
+            );
+
+            // when
+            ResultActions resultActions = performCreateReviewRequest(reviewCreateRequest, STORE_ID);
+
+            // then
+            resultActions
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("imageUrls : 이미지는 최대 5개까지 첨부할 수 있습니다. (request value: [https://image1.com, https://image2.com, https://image3.com, https://image4.com, https://image5.com, https://image6.com])"));
+
+            then(reviewService).shouldHaveNoInteractions();
+        }
+    }
+
+    @Nested
+    @DisplayName("리뷰 수정 실패 - 데이터 검증")
+    class UpdateReviewFail {
+
+        @Test
+        @DisplayName("리뷰 내용이 없는 경우")
+        void updateReviewFailNoContent() throws Exception {
+            // given
+            ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest(
+                    "",
+                    5,
+                    List.of("https://image1.com", "https://image2.com", "https://image3.com")
+            );
+
+            // when
+            ResultActions resultActions = performUpdateReviewRequest(reviewUpdateRequest, REVIEW_ID);
+
+            // then
+            resultActions
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("content : 내용을 입력해주세요. (request value: )"));
+
+            then(reviewService).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("리뷰 평점이 없는 경우")
+        void updateReviewFailNoReviewRating() throws Exception {
+            // given
+            ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest(
+                    "content",
+                    null,
+                    List.of("https://image1.com", "https://image2.com", "https://image3.com")
+            );
+
+            // when
+            ResultActions resultActions = performUpdateReviewRequest(reviewUpdateRequest, REVIEW_ID);
+
+            // then
+            resultActions
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("reviewRating : 평점을 입력해주세요. (request value: null)"));
+
+            then(reviewService).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("리뷰 평점이 1 미만인 경우")
+        void updateReviewFailInvalidReviewRating() throws Exception {
+            // given
+            ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest(
+                    "content",
+                    0,
+                    List.of("https://image1.com", "https://image2.com", "https://image3.com")
+            );
+
+            // when
+            ResultActions resultActions = performUpdateReviewRequest(reviewUpdateRequest, REVIEW_ID);
+
+            // then
+            resultActions
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("reviewRating : 평점은 1~5 사이여야 합니다. (request value: 0)"));
+
+            then(reviewService).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("리뷰 평점이 5초과인 경우")
+        void updateReviewFailOverReviewRating() throws Exception {
+            // given
+            ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest(
+                    "content",
+                    6,
+                    List.of("https://image1.com", "https://image2.com", "https://image3.com")
+            );
+
+            // when
+            ResultActions resultActions = performUpdateReviewRequest(reviewUpdateRequest, REVIEW_ID);
+
+            // then
+            resultActions
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("reviewRating : 평점은 1~5 사이여야 합니다. (request value: 6)"));
+
+            then(reviewService).shouldHaveNoInteractions();
+        }
+
+        @Test
+        @DisplayName("리뷰 이미지 URL이 5개 초과인 경우")
+        void updateReviewFailOverImageUrls() throws Exception {
+            // given
+            ReviewUpdateRequest reviewUpdateRequest = new ReviewUpdateRequest(
+                    "content",
+                    5,
+                    List.of("https://image1.com", "https://image2.com", "https://image3.com", "https://image4.com", "https://image5.com", "https://image6.com")
+            );
+
+            // when
+            ResultActions resultActions = performUpdateReviewRequest(reviewUpdateRequest, REVIEW_ID);
+
+            // then
+            resultActions
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.message").value("imageUrls : 이미지는 최대 5개까지 첨부할 수 있습니다. (request value: [https://image1.com, https://image2.com, https://image3.com, https://image4.com, https://image5.com, https://image6.com])"));
+
+            then(reviewService).shouldHaveNoInteractions();
+        }
+
+    }
+
 }
