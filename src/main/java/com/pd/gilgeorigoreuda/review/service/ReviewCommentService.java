@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewCommentService {
     
     private final ReviewCommentRepository commentRepository;
-    public void saveComment(final Long reviewId, final Long memberId , final ReviewCommentCreateRequest request) {
+    public void createReviewComment(final Long reviewId, final Long memberId , final ReviewCommentCreateRequest request) {
         ReviewComment comment = ReviewComment.builder()
                 .content(request.getContent())
                 .review(Review.builder().id(reviewId).build())

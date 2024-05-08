@@ -15,9 +15,10 @@ public class ReviewCommentListResponse {
     private List<ReviewCommentResponse> reviewComments;
     private PageInfo pageInfo;
 
-    private ReviewCommentListResponse(
+    public ReviewCommentListResponse(
             final List<ReviewCommentResponse> reviewComments,
-            final PageInfo pageInfo) {
+            final PageInfo pageInfo
+    ) {
         this.reviewComments = reviewComments;
         this.pageInfo = pageInfo;
     }
