@@ -9,7 +9,7 @@ public class ReviewCreateResponse {
 
     private Long id;
 
-    private ReviewCreateResponse(final Long id) {
+    public ReviewCreateResponse(final Long id) {
         this.id = id;
     }
 

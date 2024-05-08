@@ -3,15 +3,10 @@ package com.pd.gilgeorigoreuda.review.controller;
 import com.pd.gilgeorigoreuda.common.page.PageInfo;
 import com.pd.gilgeorigoreuda.login.domain.MemberAccessRefreshToken;
 import com.pd.gilgeorigoreuda.login.domain.MemberToken;
-import com.pd.gilgeorigoreuda.member.domain.entity.Member;
-import com.pd.gilgeorigoreuda.review.domain.entity.Review;
-import com.pd.gilgeorigoreuda.review.domain.entity.ReviewImage;
+import com.pd.gilgeorigoreuda.review.dto.request.ReviewCommentCreateRequest;
 import com.pd.gilgeorigoreuda.review.dto.request.ReviewCreateRequest;
 import com.pd.gilgeorigoreuda.review.dto.request.ReviewUpdateRequest;
-import com.pd.gilgeorigoreuda.review.dto.response.ReviewCreateResponse;
-import com.pd.gilgeorigoreuda.review.dto.response.ReviewListResponse;
-import com.pd.gilgeorigoreuda.review.dto.response.ReviewMemberResponse;
-import com.pd.gilgeorigoreuda.review.dto.response.ReviewResponse;
+import com.pd.gilgeorigoreuda.review.dto.response.*;
 import com.pd.gilgeorigoreuda.review.service.ReviewCommentService;
 import com.pd.gilgeorigoreuda.review.service.ReviewService;
 import com.pd.gilgeorigoreuda.settings.ControllerTest;
@@ -22,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
@@ -63,7 +58,7 @@ class ReviewControllerTest extends ControllerTest {
     void setUp() {
         given(memberTokenRepository.findByAccessToken(any())).willReturn(Optional.of(MEMBER_TOKEN));
         doNothing().when(jwtProvider).validateTokens(any());
-        given(jwtProvider.getSubject(any())).willReturn("1");
+        given(jwtProvider.getSubject(any())).willReturn(String.valueOf(MEMBER_ID));
     }
 
     private ResultActions performCreateReviewRequest(final ReviewCreateRequest reviewCreateRequest, final Long storeId) throws Exception {
@@ -99,12 +94,12 @@ class ReviewControllerTest extends ControllerTest {
         );
     }
 
-    private ResultActions performCreateReviewCommentRequest(final ReviewCreateRequest reviewCreateRequest, final Long reviewId) throws Exception {
+    private ResultActions performCreateReviewCommentRequest(final ReviewCommentCreateRequest reviewCommentCreateRequest, final Long reviewId) throws Exception {
         return mockMvc.perform(
                 post("/api/v1/reviews/{reviewId}/comments", reviewId)
                         .header(AUTHORIZATION, MEMBER_ACCESS_REFRESH_TOKEN.getAccessToken())
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewCreateRequest))
+                        .content(objectMapper.writeValueAsString(reviewCommentCreateRequest))
         );
     }
 
@@ -115,18 +110,18 @@ class ReviewControllerTest extends ControllerTest {
         );
     }
 
-    private ResultActions performUpdateReviewCommentRequest(final ReviewUpdateRequest reviewUpdateRequest, final Long reviewId, final Long commentId) throws Exception {
+    private ResultActions performUpdateReviewCommentRequest(final ReviewCommentCreateRequest reviewCommentCreateRequest, final Long commentId) throws Exception {
         return mockMvc.perform(
-                put("/api/v1/reviews/{reviewId}/comments/{commentId}", reviewId, commentId)
+                put("/api/v1/reviews/comments/{commentId}", commentId)
                         .header(AUTHORIZATION, MEMBER_ACCESS_REFRESH_TOKEN.getAccessToken())
                         .contentType(APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(reviewUpdateRequest))
+                        .content(objectMapper.writeValueAsString(reviewCommentCreateRequest))
         );
     }
 
-    private ResultActions performDeleteReviewCommentRequest(final Long reviewId, final Long commentId) throws Exception {
+    private ResultActions performDeleteReviewCommentRequest(final Long commentId) throws Exception {
         return mockMvc.perform(
-                delete("/api/v1/reviews/{reviewId}/comments/{commentId}", reviewId, commentId)
+                delete("/api/v1/reviews/comments/{commentId}", commentId)
                         .header(AUTHORIZATION, MEMBER_ACCESS_REFRESH_TOKEN.getAccessToken())
         );
     }
@@ -158,9 +153,39 @@ class ReviewControllerTest extends ControllerTest {
                 LocalDateTime.now()
         );
 
-        PageInfo pageInfo = new PageInfo(2, 0, 10, 2);
+        PageInfo pageInfo = new PageInfo(0, 0, 10, 1);
 
         return new ReviewListResponse(List.of(reviewResponse1, reviewResponse2), pageInfo);
+    }
+
+    private ReviewCommentListResponse reviewCommentListResponse() {
+        ReviewCommentResponse reviewCommentResponse1 = new ReviewCommentResponse(
+                1L,
+                "comment1",
+                "nickname1",
+                "profileImageUrl1",
+                LocalDateTime.now()
+        );
+
+        ReviewCommentResponse reviewCommentResponse2 = new ReviewCommentResponse(
+                2L,
+                "comment2",
+                "nickname2",
+                "profileImageUrl2",
+                LocalDateTime.now()
+        );
+
+        ReviewCommentResponse reviewCommentResponse3 = new ReviewCommentResponse(
+                3L,
+                "comment3",
+                "nickname3",
+                "profileImageUrl3",
+                LocalDateTime.now()
+        );
+
+        PageInfo pageInfo = new PageInfo(0, 0, 10, 1);
+
+        return new ReviewCommentListResponse(List.of(reviewCommentResponse1, reviewCommentResponse2, reviewCommentResponse3), pageInfo);
     }
 
     @Test
@@ -209,6 +234,8 @@ class ReviewControllerTest extends ControllerTest {
                                 )
                         )
                 );
+
+        then(reviewService).should().createReview(any(), any(), any());
     }
 
     @Test
@@ -223,7 +250,7 @@ class ReviewControllerTest extends ControllerTest {
         ResultActions resultActions = performGetReviewsRequest(STORE_ID);
 
         // then
-        resultActions
+        MvcResult mvcResult = resultActions
                 .andExpect(status().isOk())
                 .andDo(
                         restDocs.document(
@@ -270,8 +297,17 @@ class ReviewControllerTest extends ControllerTest {
                                                 .description("전체 크기")
                                 )
                         )
-                );
+                ).andReturn();
 
+        ReviewListResponse response = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(),
+                ReviewListResponse.class
+        );
+
+        assertThat(response.getReviews()).hasSize(2);
+        assertThat(response).usingRecursiveComparison().isEqualTo(reviewListResponse);
+
+        then(reviewService).should().findReviewsByStoreId(any(), any());
     }
 
     @Test
@@ -311,6 +347,8 @@ class ReviewControllerTest extends ControllerTest {
                                 )
                         )
                 );
+
+        then(reviewService).should().updateReview(any(), any(), any());
     }
 
     @Test
@@ -332,6 +370,8 @@ class ReviewControllerTest extends ControllerTest {
                                 )
                         )
                 );
+
+        then(reviewService).should().deleteReview(any(), any());
     }
 
     @Nested
@@ -554,6 +594,180 @@ class ReviewControllerTest extends ControllerTest {
             then(reviewService).shouldHaveNoInteractions();
         }
 
+    }
+
+    @Test
+    @DisplayName("리뷰 댓글 생성 성공")
+    void createReviewCommentSuccess() throws Exception {
+        // given
+        ReviewCommentCreateRequest reviewCommentCreateRequest = new ReviewCommentCreateRequest("content");
+
+        doNothing().when(reviewCommentService).createReviewComment(any(), any(), any());
+
+        // when
+        ResultActions resultActions = performCreateReviewCommentRequest(reviewCommentCreateRequest, REVIEW_ID);
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("Access Token")
+                                ),
+                                pathParameters(
+                                        parameterWithName("reviewId").description("리뷰 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("content")
+                                                .description("댓글 내용")
+                                                .attributes(field("constraints", "NotBlank"))
+                                )
+                        )
+                );
+
+        then(reviewCommentService).should().createReviewComment(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("댓글 내용이 없는 경우")
+    void createReviewCommentFailNoContent() throws Exception {
+        // given
+        ReviewCommentCreateRequest reviewCommentCreateRequest = new ReviewCommentCreateRequest("");
+
+        // when
+        ResultActions resultActions = performCreateReviewCommentRequest(reviewCommentCreateRequest, REVIEW_ID);
+
+        // then
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("content : 내용을 입력해주세요. (request value: )"));
+
+        then(reviewCommentService).shouldHaveNoInteractions();
+    }
+
+    @Test
+    @DisplayName("리뷰 댓글 목록 조회 성공")
+    void getReviewCommentsSuccess() throws Exception {
+        // given
+        ReviewCommentListResponse reviewCommentListResponse = reviewCommentListResponse();
+
+        given(reviewCommentService.findCommentsByReviewId(any(), any())).willReturn(reviewCommentListResponse);
+
+        // when
+        ResultActions resultActions = performGetReviewCommentsRequest(REVIEW_ID);
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("Access Token")
+                                ),
+                                pathParameters(
+                                        parameterWithName("reviewId").description("리뷰 ID")
+                                ),
+                                responseFields(
+                                        fieldWithPath("reviewComments")
+                                                .description("리뷰 댓글 목록"),
+                                        fieldWithPath("reviewComments[].reviewCommentId")
+                                                .description("리뷰 댓글 ID"),
+                                        fieldWithPath("reviewComments[].content")
+                                                .description("댓글 내용"),
+                                        fieldWithPath("reviewComments[].nickname")
+                                                .description("댓글 작성자 닉네임"),
+                                        fieldWithPath("reviewComments[].profileImageUrl")
+                                                .description("댓글 작성자 프로필 이미지 URL"),
+                                        fieldWithPath("reviewComments[].createdAt")
+                                                .description("댓글 생성 시간"),
+                                        fieldWithPath("pageInfo")
+                                                .description("페이지 정보"),
+                                        fieldWithPath("pageInfo.currentPage")
+                                                .description("현재 페이지"),
+                                        fieldWithPath("pageInfo.totalPages")
+                                                .description("전체 페이지 수"),
+                                        fieldWithPath("pageInfo.pageSize")
+                                                .description("페이지 크기"),
+                                        fieldWithPath("pageInfo.totalSize")
+                                                .description("전체 크기")
+
+                                )
+                        )
+                );
+
+        then(reviewCommentService).should().findCommentsByReviewId(any(), any());
+    }
+
+    @Test
+    @DisplayName("리뷰 댓글 수정 성공")
+    void updateReviewCommentSuccess() throws Exception {
+        // given
+        ReviewCommentCreateRequest reviewCommentCreateRequest = new ReviewCommentCreateRequest("new content");
+
+        // when
+        ResultActions resultActions = performUpdateReviewCommentRequest(reviewCommentCreateRequest, REVIEW_COMMENT_ID);
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("Access Token")
+                                ),
+                                pathParameters(
+                                        parameterWithName("commentId").description("댓글 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("content")
+                                                .description("댓글 내용")
+                                                .attributes(field("constraints", "NotBlank"))
+                                )
+                        )
+                );
+
+        then(reviewCommentService).should().updateComment(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("리뷰 댓글 수정 실패 - 데이터 검증")
+    void updateReviewCommentFailNoContent() throws Exception {
+        // given
+        ReviewCommentCreateRequest reviewCommentCreateRequest = new ReviewCommentCreateRequest("");
+
+        // when
+        ResultActions resultActions = performUpdateReviewCommentRequest(reviewCommentCreateRequest, REVIEW_COMMENT_ID);
+
+        // then
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("content : 내용을 입력해주세요. (request value: )"));
+
+        then(reviewCommentService).shouldHaveNoInteractions();
+    }
+
+    @Test
+    @DisplayName("리뷰 댓글 삭제 성공")
+    void deleteReviewCommentSuccess() throws Exception {
+        // when
+        ResultActions resultActions = performDeleteReviewCommentRequest(REVIEW_COMMENT_ID);
+
+        // then
+        resultActions
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                requestHeaders(
+                                        headerWithName(AUTHORIZATION).description("Access Token")
+                                ),
+                                pathParameters(
+                                        parameterWithName("commentId").description("댓글 ID")
+                                )
+                        )
+                );
+
+        then(reviewCommentService).should().deleteReviewComment(any(), any());
     }
 
 }

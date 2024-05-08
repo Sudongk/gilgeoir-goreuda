@@ -10,19 +10,20 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReviewCommentResponse {
 
-    private Long reviewId;
+    private Long reviewCommentId;
     private String content;
     private String nickname;
     private String profileImageUrl;
     private LocalDateTime createdAt;
 
     public ReviewCommentResponse(
-            final Long reviewId,
+            final Long reviewCommentId,
             final String content,
             final String nickname,
             final String profileImageUrl,
-            final LocalDateTime createdAt) {
-        this.reviewId = reviewId;
+            final LocalDateTime createdAt
+    ) {
+        this.reviewCommentId = reviewCommentId;
         this.content = content;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;

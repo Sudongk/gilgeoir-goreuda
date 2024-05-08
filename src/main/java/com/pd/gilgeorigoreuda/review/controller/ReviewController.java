@@ -26,7 +26,7 @@ import java.net.URI;
 public class ReviewController {
 
     private final ReviewService reviewService;
-    private final ReviewCommentService commentService;
+    private final ReviewCommentService reviewCommentService;
 
     @MemberOnly
     @PostMapping(value = "/stores/{storeId}")
@@ -88,7 +88,7 @@ public class ReviewController {
             @MemberInfo final LoginMember loginMember,
             @RequestBody @Valid final ReviewCommentCreateRequest commentRequest
     ) {
-        commentService.saveComment(reviewId, loginMember.getMemberId(), commentRequest);
+        reviewCommentService.createReviewComment(reviewId, loginMember.getMemberId(), commentRequest);
 
         return ResponseEntity
                 .ok()
@@ -101,8 +101,8 @@ public class ReviewController {
             @RequestParam(name = "page", required = false, defaultValue = "0") final Integer page,
             @RequestParam(name = "size", required = false, defaultValue = "10") final Integer size
     ) {
-        ReviewCommentListResponse response = commentService.findCommentsByReviewId(reviewId,
-                PageRequest.of(page, size));
+        ReviewCommentListResponse response = reviewCommentService
+                .findCommentsByReviewId(reviewId, PageRequest.of(page, size));
 
         return ResponseEntity
                 .ok()
@@ -116,7 +116,7 @@ public class ReviewController {
             @MemberInfo final LoginMember loginMember,
             @RequestBody @Valid final ReviewCommentCreateRequest commentRequest
     ) {
-        commentService.updateComment(commentId, loginMember.getMemberId(), commentRequest);
+        reviewCommentService.updateComment(commentId, loginMember.getMemberId(), commentRequest);
 
         return ResponseEntity
                 .ok()
@@ -129,7 +129,7 @@ public class ReviewController {
             @PathVariable("commentId") final Long commentId,
             @MemberInfo final LoginMember loginMember
     ) {
-        commentService.deleteReviewComment(commentId, loginMember.getMemberId());
+        reviewCommentService.deleteReviewComment(commentId, loginMember.getMemberId());
 
         return ResponseEntity
                 .ok()
